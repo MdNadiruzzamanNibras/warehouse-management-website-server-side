@@ -38,6 +38,7 @@ async function run(){
     try{
         await client.connect();
         const inventoryCollection = client.db('warehouse').collection('inventory')
+        const feedbackCollection = client.db('warehouse').collection('feedback')
         app.post('/login', async(req,res)=>{
             const user = req.body
             const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN,{
@@ -53,12 +54,19 @@ async function run(){
             const inventories = await cursor.toArray()
             res.send(inventories)
         })
+        app.get('/feedback', async(req,res)=>{
+            const qurey  = {}
+            const cursor = feedbackCollection.find(qurey)
+            const feedback = await cursor.toArray()
+            res.send(feedback)
+        })
         app.post('/inventory', async(req,res)=>{
             const newInventory = req.body
             console.log(newInventory);
             const result = await inventoryCollection.insertOne(newInventory)
             res.send(result)
         })
+       
         app.get('/myItem',verifyJwt, async(req,res)=>{
             const decodedEmail = req.decoded.email
             const email = req.query.email
@@ -88,6 +96,13 @@ async function run(){
             console.log(id);
             const query = {_id: ObjectId(id)}
             const result = await inventoryCollection.deleteOne(query)
+            res.send(result)
+        
+        })
+        app.put('/inventory/:id', async(req,res)=>{
+            const id = req.params.id
+            const query = {_id: ObjectId(id)}
+            const result = await inventoryCollection.updateOne(query)
             res.send(result)
         
         })
