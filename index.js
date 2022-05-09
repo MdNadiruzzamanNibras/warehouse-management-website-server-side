@@ -102,7 +102,9 @@ async function run(){
         app.put('/inventory/:id', async(req,res)=>{
             const id = req.params.id
             const newQuauntity = req.body
+           
             const query = {_id: ObjectId(id)}
+            console.log( query);
             const options = { upsert: true };
             const updatedDoc = {
                 $set: {
@@ -112,6 +114,7 @@ async function run(){
     
             const result = await inventoryCollection.updateOne(query, updatedDoc, options)
             res.send(result)
+            
         
         })
 
