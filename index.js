@@ -101,8 +101,16 @@ async function run(){
         })
         app.put('/inventory/:id', async(req,res)=>{
             const id = req.params.id
+            const newQuauntity = req.body
             const query = {_id: ObjectId(id)}
-            const result = await inventoryCollection.updateOne(query)
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    quauntiy : newQuauntity.quauntiy
+                }
+            };
+    
+            const result = await inventoryCollection.updateOne(query, updatedDoc, options)
             res.send(result)
         
         })
